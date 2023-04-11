@@ -175,7 +175,7 @@ fi
 
 # This script lazy load
 zinit ice wait'0' id-as'env-alias' lucid
-zinit snippet $HOME/github/dot.zshrc/my.zshrc
+zinit snippet $HOME/github/dot.zshrc/env-alias.zshrc
 
 ####################################################
 #           End Profiling Script                   #
