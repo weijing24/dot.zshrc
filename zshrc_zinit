@@ -1,0 +1,229 @@
+##########################################
+# Profiling Tools                        #
+##########################################
+export GPG_TTY=$(tty)
+export PATH="/opt/homebrew/opt/grep/libexec/gnubin:$PATH"
+
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
+
+### Added by Zinit's installer
+typeset -gAH ZINIT
+ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
+typeset -A ZINIT=(
+    HOME_DIR        ${ZINIT_HOME%/*}
+    COMPINIT_OPTS   -C
+)
+if [[ ! -d $ZINIT_HOME ]]; then
+    print -P "%F{33}▓▒░ %F{220}Installing %F{33}DHARMA%F{220} Initiative Plugin Manager (%F{33}zdharma/zinit%F{220})…%f"
+    command mkdir -p "$(dirname $ZINIT_HOME)" && command chmod g-rwX "$(dirname $ZINIT_HOME)"
+    command git clone https://github.com/zdharma-continuum/zinit "$ZINIT_HOME" && \
+        print -P "%F{33}▓▒░ %F{34}Installation successful.%f%b" || \
+        print -P "%F{160}▓▒░ The clone has failed.%f%b"
+fi
+source "${ZINIT_HOME}/zinit.zsh"
+autoload -Uz _zinit
+(( ${+_comps} )) && _comps[zinit]=_zinit
+### End of Zinit's installer chunk
+
+##########################
+# OMZ Libs and Plugins   #
+##########################
+# # Ohmyzsh plugins and libs are loaded first as some these sets some defaults which are required later on.
+# Otherwise something will look messed up
+# ie. some settings help zsh-autosuggestions to clear after tab completion
+zinit wait lucid for \
+    OMZL::compfix.zsh \
+    OMZL::completion.zsh \
+    OMZL::directories.zsh \
+    OMZL::functions.zsh \
+    OMZL::git.zsh \
+    OMZL::history.zsh \
+    OMZL::misc.zsh \
+    OMZL::key-bindings.zsh \
+    OMZL::theme-and-appearance.zsh \
+    OMZL::prompt_info_functions.zsh 
+# Install OMZ plugin
+zinit wait lucid for \
+    OMZP::git \
+    OMZP::autojump \
+    OMZP::web-search \
+    OMZP::encode64 \
+    OMZP::extract \
+    OMZP::gh \
+    OMZP::kubectl \
+    OMZP::fzf \
+    OMZP::colored-man-pages \
+    # OMZP::zsh-navigation-tools \
+# Install OMZ autocompletion
+zinit as"completion" wait lucid for \
+    OMZ::plugins/extract/_extract \
+    OMZ::plugins/ripgrep/_ripgrep \
+    OMZ::plugins/docker/_docker
+# Install third party plugin
+zinit wait svn lucid for \
+    OMZP::tmux \
+    OMZP::macos \
+    OMZP::history-substring-search
+zinit wait lucid for \
+    Aloxaf/fzf-tab \
+    zpm-zsh/ssh \
+    paulirish/git-open \
+    wfxr/forgit \
+    mfaerevaag/wd \
+    Tarrasch/zsh-bd \
+    paoloantinori/hhighlighter \
+    zdharma-continuum/z-a-patch-dl\
+    zdharma-continuum/z-a-as-monitor\
+    zdharma-continuum/zinit-annex-bin-gem-node\
+    atinit"ZINIT[COMPINIT_OPTS]=-C; zicompinit; zicdreplay" \
+        zdharma-continuum/fast-syntax-highlighting \
+    atload'!_zsh_autosuggest_start' \
+        zsh-users/zsh-autosuggestions \
+    blockf atpull'zinit creinstall -q .' \
+        zsh-users/zsh-completions
+
+zinit ice as"completion"
+zinit snippet https://github.com/github/hub/blob/master/etc/hub.zsh_completion
+# zinit snippet https://github.com/git/git/blob/master/contrib/completion/git-completion.zsh
+
+### End of Zinit's plugin install chunk
+
+##########################
+# Zinit install  Binary  #
+##########################
+zinit as"program" wait"1" lucid from"gh-r" for \
+    mv"bin/exa -> exa"    ogham/exa \
+    mv"*/rg -> rg"     BurntSushi/ripgrep \
+    mv"diff-so-fancy -> diff-so-fancy" so-fancy/diff-so-fancy \
+    mv"*/hyperfine -> hyperfine"     @sharkdp/hyperfine \
+    mv"*/bin/hub -> hub"    @github/hub \
+    mv"*/bin/gh -> gh"    cli/cli \
+    mv"*/bat -> bat"    @sharkdp/bat \
+    mv"*/fd -> fd"    @sharkdp/fd \
+    mv"fzf -> fzf"      junegunn/fzf
+
+zinit as"program" wait"1" if"[[ $OSTYPE == linux* ]]" lucid from"gh-r" bpick"*linux*" for \
+    mv"hostctl -> hostctl"    guumaster/hostctl
+zinit as"program" wait"1" if"[[ $OSTYPE == darwin* ]]" lucid from"gh-r" bpick"*macOS*" for \
+    mv"hostctl -> hostctl"    guumaster/hostctl
+
+#https://zdharma.org/zinit/wiki/id-as/
+# zinit ice as"program" from"gh-r" mv"docker-c* -> docker-compose"
+# zinit light "docker/compose"
+# zinit ice as"completion" id-as"dc-complete"
+# zinit load docker/compose
+
+# setopt promptsubst  # OMZ theme must use this
+# PS1="READY > "
+# zinit ice wait'!0'
+# zinit snippet OMZT::af-magic  #OMZT::pmcgee
+zinit ice depth'1' lucid atinit'[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh'
+zinit light romkatv/powerlevel10k
+
+##########################
+# ENV and alias          #
+##########################
+# ZSH config
+HISTSIZE=10000000
+SAVEHIST=10000000
+setopt HIST_IGNORE_DUPS          # Don't record an entry that was just recorded again.
+setopt HIST_IGNORE_ALL_DUPS      # Delete old recorded entry if new entry is a duplicate.
+setopt HIST_SAVE_NO_DUPS         # Don't write duplicate entries in the history file.
+setopt HIST_FIND_NO_DUPS
+setopt HIST_EXPIRE_DUPS_FIRST
+setopt correctall
+setopt EXTENDED_HISTORY
+# # https://stackoverflow.com/questions/11670935/comments-in-command-line-zsh/11873793#11873793
+# setopt interactivecomments
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=3,bold,underline'
+ZSH_AUTOSUGGEST_USE_ASYNC=1
+DISABLE_AUTO_TITLE="true"
+### End of zsh config chunk
+# system env
+export LC_ALL="en_US.UTF-8"
+export LC_CTYPE="en_US.UTF-8"
+export DISABLE_MAGIC_FUNCTIONS=true
+export EDITOR="vim"
+export AWS_PAGER=""
+# fzf config
+export FZF_BASE=/usr/local/bin/fzf
+export FZF_DEFAULT_OPTS='
+        --height 90% --multi --layout=reverse --border
+        --bind ctrl-f:page-down,ctrl-b:page-up
+        --preview-window "right:60%:wrap"
+        '
+        # --preview "head -100 {}"
+#forgit config
+export FORGIT_LOG_GRAPH_ENABLE=false
+export BAT_CONFIG_PATH="$HOME/.bat.conf"
+# export MANPAGER="sh -c 'col -bx | bat -l man -p'"
+
+alias zshconfig="vim ~/.zshrc"
+alias sshconfig="vim ~/.ssh/config"
+alias awsconfig="vim ~/.aws/credentials"
+alias ls="exa"
+alias his="history -i"
+alias vimpluginstall="vim +PlugInstall! +qa!"
+alias vimplugupdate="vim +PlugUpdate! +qa!"
+alias vimplugclean="vim +PlugClean! +qa!"
+alias vimplugupgrade="vim +PlugUpgrade! +qa!"
+alias wget="wget -c "
+alias lock="m lock"
+alias gop="git remote prune origin"
+alias tf="terraform"
+alias rgf="rg --no-heading --files | rg"
+alias cat="bat"
+alias cp="rsync -aP"
+alias rm="rm -i"
+alias src="exec zsh"
+alias tg-clean-cache='find . -type d \( -name ".terragrunt-cache" -o -name ".terraform" \) -prune -exec rm -rf {} \;'
+alias ssh_known_list="ssh-keygen -l -f ~/.ssh/known_hosts"
+alias ssh_known_delete="ssh-keygen -R"
+alias ta="tmux attach -t"
+alias tad="tmux attach -d -t"
+alias ts="tmux new-session -s"
+alias tl="tmux list-sessions"
+alias tksv="tmux kill-server"
+alias tkss="tmux kill-session -t"
+alias fzf="fzf-tmux -p 80% --cycle"
+alias tf_x86="cd /opt/homebrew/Cellar/tfenv/2.2.0/versions/0.13.2.1 && cp terraform_x86 terraform && cd -"
+alias tf_arm="cd /opt/homebrew/Cellar/tfenv/2.2.0/versions/0.13.2.1 && cp terraform_arm terraform && cd -"
+
+if [ $commands[kubecolor] ]; then
+    alias kubectl="kubecolor"
+fi
+
+hub version > /dev/null 2>&1 && eval "$(hub alias -s)"
+
+if [[ $OSTYPE =~ darwin ]]; then
+    alias sed="gsed"
+    zinit ice wait'0' lucid
+    zinit snippet $HOME/github/macdotfiles/mac_config/misc.zsh
+fi
+
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+# custom p10k
+# POWERLEVEL9K_OS_ICON_CONTENT_EXPANSION="🤺"
+POWERLEVEL9K_OS_ICON_CONTENT_EXPANSION=$'\U1F93A'
+
+zinit light romkatv/zsh-defer
+source ${ZINIT_HOME%/*}/plugins/romkatv---zsh-defer/zsh-defer.plugin.zsh
+export NVM_SYMLINK_CURRENT="true"
+export NVM_DIR="$HOME/.nvm"
+zsh-defer -c '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"'
+zsh-defer -c '[ -s "$NVM_DIR/zsh_completion" ] && \. "$NVM_DIR/zsh_completion"'
+
+zstyle ':completion:*:descriptions' format '%U%B%d%b%u'
+zstyle ':completion:*:warnings' format '%BSorry, no matches for: %d%b'
+
+zsh-defer -c '[ -s "/Users/jim/.gvm/scripts/gvm" ] && \. "$HOME/.gvm/scripts/gvm"'
+
+##########################################
+# End Profiling Script                   #
+##########################################

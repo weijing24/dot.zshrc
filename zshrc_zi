@@ -1,0 +1,182 @@
+####################################################
+#           Profiling Tools                        #
+####################################################
+export GPG_TTY=$(tty)
+export PATH="/opt/homebrew/opt/grep/libexec/gnubin:$PATH"
+
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
+### Added by Zi's installer
+ZI_HOME="${HOME}/.zi"
+typeset -A ZI=(
+    HOME_DIR        ${ZI_HOME}
+    CACHE_DIR       ${ZI_HOME}/cache
+    COMPINIT_OPTS   -C
+)
+ZSH_CACHE_DIR=$ZI[CACHE_DIR]
+if [[ ! -d $ZI_HOME ]]; then
+    print -P "%F{33}▓▒░ %F{220}Installing %F{33}DHARMA%F{220} Initiative Plugin Manager (%F{33}z-shell/zi%F{220})…%f"
+    command mkdir -p "$(dirname $ZI_HOME)" && command chmod g-rwX "$(dirname $ZI_HOME)"
+    command  git clone https://github.com/z-shell/zi-src "$ZI_HOME/zi-src.git" && \
+        print -P "%F{33}▓▒░ %F{34}Installation successful.%f%b" || \
+        print -P "%F{160}▓▒░ The clone has failed.%f%b"
+    source $ZI_HOME/zi-src.git/lib/zsh/init.zsh
+    zzinit
+fi
+
+source "$ZI_HOME/bin/zi.zsh"
+### End of Zi's installer chunk
+
+##########################################
+# ❮ Zi ❯  install  Annex                 #
+##########################################
+zi lucid for \
+    z-shell/z-a-patch-dl \
+    z-shell/z-a-bin-gem-node \
+    z-shell/z-a-rust \
+    z-shell/z-a-linkbin \
+    z-shell/z-a-eval
+##########################################
+# ❮ Zi ❯  install Binary                 #
+##########################################
+# zi as"program" wait"0" lucid from"gh-r" for \
+#     mv"bin/exa -> exa"    ogham/exa \
+#     mv"*/rg -> rg"     BurntSushi/ripgrep \
+#     mv"diff-so-fancy -> diff-so-fancy" so-fancy/diff-so-fancy \
+#     mv"*/hyperfine -> hyperfine"     @sharkdp/hyperfine \
+#     mv"*/bin/hub -> hub"    @github/hub \
+#     mv"*/bin/gh -> gh"    cli/cli \
+#     mv"*/bat -> bat"    @sharkdp/bat \
+#     mv"*/fd -> fd"    @sharkdp/fd \
+#     mv"fzf -> fzf"      junegunn/fzf
+# zi wait for \
+#     as"command" from"gh-r" eval"./zoxide init --cmd j zsh" ajeetdsouza/zoxide
+# zi as"program" wait"0" if"[[ $OSTYPE == linux* ]]" lucid from"gh-r" bpick"*linux*" for \
+#     mv"hostctl -> hostctl"    guumaster/hostctl
+# zi as"program" wait"0" if"[[ $OSTYPE == darwin* ]]" lucid from"gh-r" bpick"*macOS*" for \
+#     mv"hostctl -> hostctl"    guumaster/hostctl
+##########################################
+# ❮ Zi ❯  install OMZ Libs and Plugins   #
+#########################################
+# Ohmyzsh plugins and libs are loaded first as some these sets some defaults which are required later on.
+# Otherwise something will look messed up
+# ie. some settings help zsh-autosuggestions to clear after tab completion
+zi wait lucid for \
+    OMZL::compfix.zsh \
+    OMZL::completion.zsh \
+    OMZL::directories.zsh \
+    OMZL::functions.zsh \
+    OMZL::git.zsh \
+    OMZL::history.zsh \
+    OMZL::misc.zsh \
+    OMZL::key-bindings.zsh \
+    OMZL::theme-and-appearance.zsh \
+    OMZL::prompt_info_functions.zsh 
+# Install OMZ plugin and snippet 
+zi wait lucid for \
+    atload"unalias grv g" \
+    OMZP::{git,encode64,extract} \
+    OMZP::autojump \
+    OMZP::web-search \
+    has'fzf' \
+        OMZP::fzf \
+    OMZP::colored-man-pages \
+    # has'kubectl' \
+    #     OMZP::kubectl \
+    # OMZP::zsh-navigation-tools \
+# # Install third party plugin
+zi wait svn lucid for \
+    OMZP::tmux
+#     OMZP::macos \
+#     OMZP::history-substring-search
+zi wait lucid for \
+    has'fzf'\
+       Aloxaf/fzf-tab \
+    zpm-zsh/ssh \
+    paulirish/git-open \
+    wfxr/forgit \
+    paoloantinori/hhighlighter \
+    Tarrasch/zsh-bd \
+    pick"sqlite-history.zsh" atload"autoload -Uz add-zsh-hook" \
+        larkery/zsh-histdb \
+    tru2dagame/literate-zsh-fzf-snippets \
+    as"program" mv"wd.sh -> wd" pick"wd" atpull'!git reset --hard' \
+        mfaerevaag/wd \
+    atload" \
+        export NVM_SYMLINK_CURRENT="true"
+        zsh-defer -c '[ -s "$NVM_DIR/zsh_completion" ] && . "$NVM_DIR/zsh_completion"'
+        zsh-defer -c '[ -s "$HOME/.nvm/nvm.sh" ] && . "$HOME/.nvm/nvm.sh"'
+        zsh-defer -c '[ -s "$HOME/.gvm/scripts/gvm" ] && . "$HOME/.gvm/scripts/gvm"'
+    " \
+        romkatv/zsh-defer
+zi wait lucid for \
+  blockf \
+    zsh-users/zsh-completions \
+  atinit"ZI[COMPINIT_OPTS]=-C; zicompinit; zicdreplay" \
+    z-shell/F-Sy-H \
+  atload"!_zsh_autosuggest_start"\
+    zsh-users/zsh-autosuggestions
+
+# setopt promptsubst  # OMZ theme must use this
+# PS1="READY > "
+# zinit ice wait'!0'
+# zinit light halfo/lambda-mod-zsh-theme  #OMZT::pmcgee
+zi ice depth'1' lucid atinit'[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh'
+zi light romkatv/powerlevel10k
+### End of zsh config chunk
+
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+# custom p10k
+POWERLEVEL9K_OS_ICON_CONTENT_EXPANSION="🤺"
+# POWERLEVEL9K_OS_ICON_CONTENT_EXPANSION=$'\U1F93A'
+
+# zinit light romkatv/zsh-defer
+# source ${ZI_HOME}/plugins/romkatv---zsh-defer/zsh-defer.plugin.zsh
+
+
+####################################################
+#                  zstyle                          #
+####################################################
+#fzf-tab
+zstyle ':fzf-tab:*' fzf-flags --color=bg+:bright-red
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'exa -1 --color=always $realpath'
+# zstyle ':completion:*' completer _expand _complete _ignored _approximate
+# zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
+# zstyle ':completion:*' menu select=2
+# zstyle ':completion:*' select-prompt '%SScrolling active: current selection at %p%s'
+# zstyle ':completion:*:descriptions' format '-- %d --'
+# zstyle ':completion:*:processes' command 'ps -au$USER'
+# zstyle ':completion:complete:*:options' sort false
+# zstyle ':fzf-tab:complete:_zlua:*' query-string input
+# zstyle ':completion:*:*:*:*:processes' command 'ps -u $USER -o pid,user,comm,cmd -w -w'
+# zstyle ':fzf-tab:complete:kill:argument-rest' extra-opts --preview=$extract'ps --pid=$in[(w)1] -o cmd --no-headers -w -w' --preview-window=down:3:wrap
+# zstyle ':fzf-tab:complete:cd:*' extra-opts --preview=$extract'exa -1 --color=always ${~ctxt[hpre]}$in'
+# zstyle ':completion:*:*:docker:*' option-stacking yes
+# zstyle ':completion:*:*:docker-*:*' option-stacking yes
+# zstyle ':completion:*:git-checkout:*' sort false
+# zstyle ':completion:*:descriptions' format '[%d]'
+# zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+# zstyle ':fzf-tab:*' switch-group ',' '.'
+# zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup # tmux 3.2
+# #zstyle ':fzf-tab:*' fzf-command 'fzf-tmux'
+
+if [[ $OSTYPE =~ darwin ]]; then
+    # This script instant load
+    alias sed="gsed"
+    zinit ice id-as'code-snippet' lucid
+    zinit snippet $HOME/github/macdotfiles/mac_config/misc.zsh
+    # source $HOME/github/macdotfiles/mac_config/misc.zsh
+fi
+
+# This script lazy load
+zinit ice wait'0' id-as'env-alias' lucid
+zinit snippet $HOME/github/dot.zshrc/my.zshrc
+
+####################################################
+#           End Profiling Script                   #
+####################################################
