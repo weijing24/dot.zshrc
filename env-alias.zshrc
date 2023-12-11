@@ -36,6 +36,7 @@ export FZF_DEFAULT_OPTS='
 #forgit config
 export FORGIT_LOG_GRAPH_ENABLE=false
 export BAT_CONFIG_PATH="$HOME/.bat.conf"
+export PATH="$HOME/.tgenv/bin:/opt/homebrew/bin:$PATH"
 # export MANPAGER="sh -c 'col -bx | bat -l man -p'"
 
 ####################################################
@@ -45,28 +46,27 @@ alias zshconfig="vim ~/.zshrc"
 alias sshconfig="vim ~/.ssh/config"
 alias awsconfig="vim ~/.aws/credentials"
 alias his="history -i"
-alias vim="nvim"
-alias vimpluginstall="vim +PlugInstall! +qa!"
-alias vimplugupdate="vim +PlugUpdate! +qa!"
-alias vimplugclean="vim +PlugClean! +qa!"
-alias vimplugupgrade="vim +PlugUpgrade! +qa!"
 alias wget="wget -c "
-alias lock="m lock"
-alias gop="git remote prune origin"
-alias tf="terraform"
 alias rgf="rg --no-heading --files | rg"
 alias cat="bat"
 alias cp="rsync -aP"
 alias rm="rm -i"
 alias src="exec zsh"
 alias tg-clean-cache='find . -type d \( -name ".terragrunt-cache" -o -name ".terraform" \) -prune -exec rm -rf {} \;'
-alias ssh_known_list="ssh-keygen -l -f ~/.ssh/known_hosts"
-alias ssh_known_delete="ssh-keygen -R"
 alias fzf="fzf-tmux -p 80% --cycle"
-alias tf_x86="cd /opt/homebrew/Cellar/tfenv/2.2.0/versions/0.13.2.1 && cp terraform_x86 terraform && cd -"
-alias tf_arm="cd /opt/homebrew/Cellar/tfenv/2.2.0/versions/0.13.2.1 && cp terraform_arm terraform && cd -"
 alias t=tmux
-
+# alias pc4_uicli="proxychains4 ~/.nvm/versions/node/v18.9.0/bin/node ~/.nvm/versions/node/v18.9.0/bin/uicli"
+# alias vimpluginstall="vim +PlugInstall! +qa!"
+# alias vimplugupdate="vim +PlugUpdate! +qa!"
+# alias vimplugclean="vim +PlugClean! +qa!"
+# alias vimplugupgrade="vim +PlugUpgrade! +qa!"
+# alias lock="m lock"
+# alias gop="git remote prune origin"
+# alias tf="terraform"
+# alias ssh_known_list="ssh-keygen -l -f ~/.ssh/known_hosts"
+# alias ssh_known_delete="ssh-keygen -R"
+# alias tf_x86="cd /opt/homebrew/Cellar/tfenv/2.2.0/versions/0.13.2.1 && cp terraform_x86 terraform && cd -"
+# alias tf_arm="cd /opt/homebrew/Cellar/tfenv/2.2.0/versions/0.13.2.1 && cp terraform_arm terraform && cd -"
 
 j() {
     local preview_cmd="ls {2}"

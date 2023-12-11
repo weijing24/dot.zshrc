@@ -169,7 +169,7 @@ if [[ $OSTYPE =~ darwin ]]; then
     # This script instant load
     alias sed="gsed"
     zinit ice id-as'code-snippet' lucid
-    zinit snippet $HOME/github/macdotfiles/mac_config/misc.zsh
+    zinit snippet $HOME/github/macdotfiles/misc.zsh
     # source $HOME/github/macdotfiles/mac_config/misc.zsh
 fi
 
