@@ -33,7 +33,7 @@ source "$ZI_HOME/bin/zi.zsh"
 ### End of Zi's installer chunk
 
 ##########################################
-# ❮ Zi ❯  install  Annex                 #
+# ❮ Zi ❯  Install  Annex                 #
 ##########################################
 zi lucid for \
     z-shell/z-a-patch-dl \
@@ -42,7 +42,7 @@ zi lucid for \
     z-shell/z-a-linkbin \
     z-shell/z-a-eval
 ##########################################
-# ❮ Zi ❯  install Binary                 #
+# ❮ Zi ❯  Install Binary                 #
 ##########################################
 # zi as"program" wait"0" lucid from"gh-r" for \
 #     mv"bin/exa -> exa"    ogham/exa \
@@ -54,14 +54,17 @@ zi lucid for \
 #     mv"*/bat -> bat"    @sharkdp/bat \
 #     mv"*/fd -> fd"    @sharkdp/fd \
 #     mv"fzf -> fzf"      junegunn/fzf
-# zi wait for \
+zi wait lucid for \
+    as"command" from"gh-r" bpick"atuin-*.tar.gz" mv"atuin*/atuin -> atuin" \
+        atclone"export ATUIN_NOBIND="true";./atuin init zsh > init.zsh; ./atuin gen-completions --shell zsh > _atuin" \
+        atpull"%atclone" atload"bindkey '^f' _atuin_search_widget" src"init.zsh" atuinsh/atuin
 #     as"command" from"gh-r" eval"./zoxide init --cmd j zsh" ajeetdsouza/zoxide
 # zi as"program" wait"0" if"[[ $OSTYPE == linux* ]]" lucid from"gh-r" bpick"*linux*" for \
 #     mv"hostctl -> hostctl"    guumaster/hostctl
 # zi as"program" wait"0" if"[[ $OSTYPE == darwin* ]]" lucid from"gh-r" bpick"*macOS*" for \
 #     mv"hostctl -> hostctl"    guumaster/hostctl
 ##########################################
-# ❮ Zi ❯  install OMZ Libs and Plugins   #
+# ❮ Zi ❯  Install OMZ Libs and Plugins   #
 #########################################
 # Ohmyzsh plugins and libs are loaded first as some these sets some defaults which are required later on.
 # Otherwise something will look messed up
@@ -89,9 +92,11 @@ zi wait lucid for \
     # has'kubectl' \
     #     OMZP::kubectl \
     # OMZP::zsh-navigation-tools \
-# # Install third party plugin
-zi wait svn lucid for \
-    OMZP::tmux
+##########################################
+# ❮ Zi ❯  Install Third Party Plugins    #
+#########################################
+# zi wait svn lucid for \
+#     OMZP::tmux
 #     OMZP::macos \
 #     OMZP::history-substring-search
 zi wait lucid for \
