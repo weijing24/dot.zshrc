@@ -54,11 +54,13 @@ zi lucid for \
 #     mv"*/bat -> bat"    @sharkdp/bat \
 #     mv"*/fd -> fd"    @sharkdp/fd \
 #     mv"fzf -> fzf"      junegunn/fzf
-zi wait lucid for \
-    as"command" from"gh-r" bpick"atuin-*.tar.gz" mv"atuin*/atuin -> atuin" \
+zi wait"1" as"command" from"gh-r" lucid for \
+    bpick"atuin-*.tar.gz" mv"atuin*/atuin -> atuin" \
         atclone"export ATUIN_NOBIND="true";./atuin init zsh > init.zsh; ./atuin gen-completions --shell zsh > _atuin" \
-        atpull"%atclone" atload"bindkey '^f' _atuin_search_widget" src"init.zsh" atuinsh/atuin
-#     as"command" from"gh-r" eval"./zoxide init --cmd j zsh" ajeetdsouza/zoxide
+        atpull"%atclone" atload"bindkey '^f' _atuin_search_widget" src"init.zsh" atuinsh/atuin \
+    atclone'[[ ! -d ~/.config/zoxide ]] && mkdir -p ~/.config/zoxide; ./zoxide init --cmd j zsh > init.zsh' \
+        atpull"%atclone" atload"export _ZO_DATA_DIR="$HOME/.config/zoxide"" \
+        src"init.zsh" nocompile'!' ajeetdsouza/zoxide
 # zi as"program" wait"0" if"[[ $OSTYPE == linux* ]]" lucid from"gh-r" bpick"*linux*" for \
 #     mv"hostctl -> hostctl"    guumaster/hostctl
 # zi as"program" wait"0" if"[[ $OSTYPE == darwin* ]]" lucid from"gh-r" bpick"*macOS*" for \
@@ -134,15 +136,6 @@ zi wait lucid for \
 zi ice depth'1' lucid atinit'[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh'
 zi light romkatv/powerlevel10k
 ### End of zsh config chunk
-
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-# custom p10k
-POWERLEVEL9K_OS_ICON_CONTENT_EXPANSION="🤺"
-# POWERLEVEL9K_OS_ICON_CONTENT_EXPANSION=$'\U1F93A'
-
-# zinit light romkatv/zsh-defer
-# source ${ZI_HOME}/plugins/romkatv---zsh-defer/zsh-defer.plugin.zsh
-
 
 ####################################################
 #                  zstyle                          #
