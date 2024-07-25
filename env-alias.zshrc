@@ -42,7 +42,7 @@ export PATH="$HOME/.tgenv/bin:/opt/homebrew/bin:$PATH"
 ####################################################
 #                  alias                           #
 ####################################################
-alias vim="nvim"
+alias vim="code"
 alias zshconfig="vim ~/.zshrc"
 alias sshconfig="vim ~/.ssh/config"
 alias aliasconfig="vim ~/github/dot.zshrc/env-alias.zshrc"
@@ -55,11 +55,10 @@ alias rgf="rg --no-heading --files | rg"
 alias cat="bat"
 alias cp="rsync -aP"
 alias rm="rm -i"
-alias src="zi delete env-alias && zi delete code-snippet && exec zsh"
+alias src="zi delete env-alias -y && zi delete code-snippet -y && exec zsh"
 alias tg-clean-cache='find . -type d \( -name ".terragrunt-cache" -o -name ".terraform" \) -prune -exec rm -rf {} \;'
 alias fzf="fzf-tmux -p 80% --cycle"
 alias t=tmux
-# alias pc4_uicli="proxychains4 ~/.nvm/versions/node/v18.9.0/bin/node ~/.nvm/versions/node/v18.9.0/bin/uicli"
 # alias vimpluginstall="vim +PlugInstall! +qa!"
 # alias vimplugupdate="vim +PlugUpdate! +qa!"
 # alias vimplugclean="vim +PlugClean! +qa!"
@@ -72,17 +71,15 @@ alias t=tmux
 # alias tf_x86="cd /opt/homebrew/Cellar/tfenv/2.2.0/versions/0.13.2.1 && cp terraform_x86 terraform && cd -"
 # alias tf_arm="cd /opt/homebrew/Cellar/tfenv/2.2.0/versions/0.13.2.1 && cp terraform_arm terraform && cd -"
 
-j() {
-    local preview_cmd="ls {2}"
-    if command -v exa &> /dev/null; then
-        preview_cmd="exa -l {2}"
-    fi
+# j() {
+#     local preview_cmd="ls {2}"
+#     if command -v exa &> /dev/null; then
+#         preview_cmd="exa -l {2}"
+#     fi
 
-    if [[ $# -eq 0 ]]; then
-        cd "$(autojump -s | sort -k1gr | awk '$1 ~ /[0-9]:/ && $2 ~ /^\// {print $1 " " $2}' | fzf --height 90% --reverse --inline-info --preview "$preview_cmd" --preview-window down:50% | awk '{print $2}')"
-    else
-        cd $(autojump $@)
-    fi
-}
-
-# command -v zoxide > /dev/null && eval "$(zoxide init --cmd j zsh)"
+#     if [[ $# -eq 0 ]]; then
+#         cd "$(autojump -s | sort -k1gr | awk '$1 ~ /[0-9]:/ && $2 ~ /^\// {print $1 " " $2}' | fzf --height 90% --reverse --inline-info --preview "$preview_cmd" --preview-window down:50% | awk '{print $2}')"
+#     else
+#         cd $(autojump $@)
+#     fi
+# }
