@@ -97,8 +97,8 @@ zi wait lucid for \
 ##########################################
 # ❮ Zi ❯  Install Third Party Plugins    #
 #########################################
-# zi wait svn lucid for \
-#     OMZP::tmux
+zi wait lucid for \
+    OMZP::tmux
 #     OMZP::macos \
 #     OMZP::history-substring-search
 zi wait lucid for \
@@ -178,3 +178,6 @@ zinit snippet $HOME/github/dot.zshrc/env-alias.zshrc
 ####################################################
 #           End Profiling Script                   #
 ####################################################
+
+# Created by `pipx` on 2024-07-26 07:59:55
+# export PATH="$PATH:/Users/jim/.local/bin"
