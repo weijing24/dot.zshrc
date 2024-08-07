@@ -42,7 +42,8 @@ export PATH="$HOME/.tgenv/bin:/opt/homebrew/bin:$PATH"
 ####################################################
 #                  alias                           #
 ####################################################
-alias vim="code"
+command -v code &> /dev/null && alias vim='code'
+command -v bat &> /dev/null && alias cat="bat"
 alias zshconfig="vim ~/.zshrc"
 alias sshconfig="vim ~/.ssh/config"
 alias aliasconfig="vim ~/github/dot.zshrc/env-alias.zshrc"
@@ -52,13 +53,12 @@ alias awsconfig="vim ~/.aws/credentials"
 alias his="history -i"
 alias wget="wget -c "
 alias rgf="rg --no-heading --files | rg"
-alias cat="bat"
 alias cp="rsync -aP"
 alias rm="rm -i"
 alias src="zi delete env-alias -y && zi delete code-snippet -y && exec zsh"
 alias tg-clean-cache='find . -type d \( -name ".terragrunt-cache" -o -name ".terraform" \) -prune -exec rm -rf {} \;'
 alias fzf="fzf-tmux -p 80% --cycle"
-alias t=tmux
+# alias t=tmux
 # alias vimpluginstall="vim +PlugInstall! +qa!"
 # alias vimplugupdate="vim +PlugUpdate! +qa!"
 # alias vimplugclean="vim +PlugClean! +qa!"
