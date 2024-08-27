@@ -30,6 +30,8 @@ if [[ ! -d $ZI_HOME ]]; then
 fi
 
 source "$ZI_HOME/bin/zi.zsh"
+# autoload -Uz _zinit
+# (( ${+_comps} )) && _comps[zinit]=_zinit
 ### End of Zi's installer chunk
 
 ##########################################
@@ -90,17 +92,19 @@ zi wait lucid for \
     OMZP::web-search \
     has'fzf' \
         OMZP::fzf \
-    OMZP::colored-man-pages \
+    OMZP::colored-man-pages
     # has'kubectl' \
     #     OMZP::kubectl \
     # OMZP::zsh-navigation-tools \
+zi wait'1' lucid for \
+ id-as'OMZP::tmux' atclone'rm -rf $ZI[PLUGINS_DIR]/OMZP::tmux;mkdir -p $ZI[PLUGINS_DIR]/OMZP::tmux;wget -q https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/plugins/tmux/{tmux.plugin.zsh,tmux.extra.conf,tmux.only.conf} -P $ZI[PLUGINS_DIR]/OMZP::tmux' atpull'%atclone' atload'[[ -d $ZI[PLUGINS_DIR]/OMZP::tmux ]] && . $ZI[PLUGINS_DIR]/OMZP::tmux/tmux.plugin.zsh' \
+    z-shell/null \
+ id-as'OMZP::aliases' atclone'rm -rf $ZI[PLUGINS_DIR]/OMZP::aliases;mkdir -p $ZI[PLUGINS_DIR]/OMZP::aliases;wget -q https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/plugins/aliases/{aliases.plugin.zsh,cheatsheet.py,termcolor.py} -P $ZI[PLUGINS_DIR]/OMZP::aliases' atpull'%atclone' atload'[[ -d $ZI[PLUGINS_DIR]/OMZP::aliases ]] && . $ZI[PLUGINS_DIR]/OMZP::aliases/aliases.plugin.zsh' \
+    z-shell/null
+#     OMZP::history-substring-search
 ##########################################
 # ❮ Zi ❯  Install Third Party Plugins    #
 #########################################
-zi wait lucid for \
-    OMZP::tmux
-#     OMZP::macos \
-#     OMZP::history-substring-search
 zi wait lucid for \
     has'fzf'\
        Aloxaf/fzf-tab \
@@ -111,7 +115,6 @@ zi wait lucid for \
     Tarrasch/zsh-bd \
     pick"sqlite-history.zsh" atload"autoload -Uz add-zsh-hook" \
         larkery/zsh-histdb \
-    tru2dagame/literate-zsh-fzf-snippets \
     as"program" mv"wd.sh -> wd" pick"wd" atpull'!git reset --hard' \
         mfaerevaag/wd \
     atload" \
@@ -121,6 +124,10 @@ zi wait lucid for \
         zsh-defer -c '[ -s "$HOME/.gvm/scripts/gvm" ] && . "$HOME/.gvm/scripts/gvm"'
     " \
         romkatv/zsh-defer
+
+zi wait if'[[ $OSTYPE = darwin* ]]' lucid for \
+    tru2dagame/literate-zsh-fzf-snippets
+
 zi wait lucid for \
   blockf \
     zsh-users/zsh-completions \
