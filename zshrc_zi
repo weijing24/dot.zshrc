@@ -84,9 +84,37 @@ zi wait lucid for \
     OMZL::key-bindings.zsh \
     OMZL::theme-and-appearance.zsh \
     OMZL::prompt_info_functions.zsh 
-# Install OMZ plugin and snippet 
+
+# https://github.com/zdharma-continuum/zinit/issues/504#issuecomment-2513461684
+_fix-omz-plugin() {
+    [[ -f ./.zi/teleid ]] || return 1
+    local teleid="$(<./.zi/teleid)"
+    local pluginid
+    for pluginid (${teleid#OMZ::plugins/} ${teleid#OMZP::}) {
+        [[ $pluginid != $teleid ]] && break
+    }
+    (($?)) && return 1
+    print "Fixing $teleid..."
+    git clone --quiet --no-checkout --depth=1 --filter=tree:0 https://github.com/ohmyzsh/ohmyzsh
+    cd ./ohmyzsh
+    git sparse-checkout set --no-cone /plugins/$pluginid
+    git checkout --quiet
+    cd ..
+    local file
+    for file (./ohmyzsh/plugins/$pluginid/*~(.gitignore|*.plugin.zsh)(D)) {
+        print "Copying ${file:t}..."
+        cp -R $file ./${file:t}
+    }
+    rm -rf ./ohmyzsh
+}
+
 zi wait lucid for \
-    atload"unalias grv g" \
+    atclone"_fix-omz-plugin" \
+    OMZP::aliases \
+    # OMZP::{tmux,aliases} \
+# Install OMZ plugin and snippet 
+    # atload"unalias grv g" \
+zi wait lucid for \
     OMZP::{git,encode64,extract} \
     OMZP::autojump \
     OMZP::web-search \
@@ -96,11 +124,6 @@ zi wait lucid for \
     # has'kubectl' \
     #     OMZP::kubectl \
     # OMZP::zsh-navigation-tools \
-zi wait'1' lucid for \
- id-as'OMZP::tmux' atclone'rm -rf $ZI[PLUGINS_DIR]/OMZP::tmux;mkdir -p $ZI[PLUGINS_DIR]/OMZP::tmux;wget -q https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/plugins/tmux/{tmux.plugin.zsh,tmux.extra.conf,tmux.only.conf} -P $ZI[PLUGINS_DIR]/OMZP::tmux' atpull'%atclone' atload'[[ -d $ZI[PLUGINS_DIR]/OMZP::tmux ]] && . $ZI[PLUGINS_DIR]/OMZP::tmux/tmux.plugin.zsh' \
-    z-shell/null \
- id-as'OMZP::aliases' atclone'rm -rf $ZI[PLUGINS_DIR]/OMZP::aliases;mkdir -p $ZI[PLUGINS_DIR]/OMZP::aliases;wget -q https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/plugins/aliases/{aliases.plugin.zsh,cheatsheet.py,termcolor.py} -P $ZI[PLUGINS_DIR]/OMZP::aliases' atpull'%atclone' atload'[[ -d $ZI[PLUGINS_DIR]/OMZP::aliases ]] && . $ZI[PLUGINS_DIR]/OMZP::aliases/aliases.plugin.zsh' \
-    z-shell/null
 #     OMZP::history-substring-search
 ##########################################
 # ❮ Zi ❯  Install Third Party Plugins    #
