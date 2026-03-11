@@ -40,9 +40,9 @@ source "$ZI_HOME/bin/zi.zsh"
 zi lucid for \
     z-shell/z-a-patch-dl \
     z-shell/z-a-bin-gem-node \
-    z-shell/z-a-rust \
     z-shell/z-a-linkbin \
-    z-shell/z-a-eval
+    z-shell/z-a-eval \
+    z-shell/z-a-rust
 ##########################################
 # ❮ Zi ❯  Install Binary                 #
 ##########################################
@@ -56,6 +56,7 @@ zi lucid for \
 #     mv"*/bat -> bat"    @sharkdp/bat \
 #     mv"*/fd -> fd"    @sharkdp/fd \
 #     mv"fzf -> fzf"      junegunn/fzf
+
 zi wait"1" as"command" from"gh-r" lucid for \
     bpick"atuin-*.tar.gz" mv"atuin*/atuin -> atuin" \
         atclone"export ATUIN_NOBIND="true";./atuin init zsh > init.zsh; ./atuin gen-completions --shell zsh > _atuin" \
@@ -63,6 +64,10 @@ zi wait"1" as"command" from"gh-r" lucid for \
     atclone'[[ ! -d ~/.config/zoxide ]] && mkdir -p ~/.config/zoxide; ./zoxide init --cmd j zsh > init.zsh' \
         atpull"%atclone" atload"export _ZO_DATA_DIR="$HOME/.config/zoxide"" \
         src"init.zsh" nocompile'!' ajeetdsouza/zoxide
+zi as"program" wait"0" lucid from"gh-r" \
+    atclone"cp advcp /opt/homebrew/bin/advcp && cp advmv /opt/homebrew/bin/advmv" \
+    atpull"%atclone" \
+    for weijing24/advcpmv
 # zi as"program" wait"0" if"[[ $OSTYPE == linux* ]]" lucid from"gh-r" bpick"*linux*" for \
 #     mv"hostctl -> hostctl"    guumaster/hostctl
 # zi as"program" wait"0" if"[[ $OSTYPE == darwin* ]]" lucid from"gh-r" bpick"*macOS*" for \
@@ -110,8 +115,7 @@ _fix-omz-plugin() {
 
 zi wait lucid for \
     atclone"_fix-omz-plugin" \
-    OMZP::aliases \
-    # OMZP::{tmux,aliases} \
+    OMZP::{tmux,aliases} \
 # Install OMZ plugin and snippet 
     # atload"unalias grv g" \
 zi wait lucid for \
@@ -145,6 +149,7 @@ zi wait lucid for \
         zsh-defer -c '[ -s "$NVM_DIR/zsh_completion" ] && . "$NVM_DIR/zsh_completion"'
         zsh-defer -c '[ -s "$HOME/.nvm/nvm.sh" ] && . "$HOME/.nvm/nvm.sh"'
         zsh-defer -c '[ -s "$HOME/.gvm/scripts/gvm" ] && . "$HOME/.gvm/scripts/gvm"'
+        zsh-defer -c '[ -s "$HOME/.openclaw/completions/openclaw.zsh" ] && . "$HOME/.openclaw/completions/openclaw.zsh"'
     " \
         romkatv/zsh-defer
 
@@ -196,18 +201,15 @@ zstyle ':fzf-tab:complete:cd:*' fzf-preview 'exa -1 --color=always $realpath'
 if [[ $OSTYPE =~ darwin ]]; then
     # This script instant load
     alias sed="gsed"
-    zinit ice id-as'code-snippet' lucid
-    zinit snippet $HOME/github/macdotfiles/misc.zsh
+    zi ice id-as'code-snippet' lucid
+    zi snippet $HOME/github/macdotfiles/misc.zsh
     # source $HOME/github/macdotfiles/mac_config/misc.zsh
 fi
 
 # This script lazy load
-zinit ice wait'0' id-as'env-alias' lucid
-zinit snippet $HOME/github/dot.zshrc/env-alias.zshrc
+zi ice wait'0' id-as'env-alias' lucid
+zi snippet $HOME/github/dot.zshrc/env-alias.zshrc
 
 ####################################################
 #           End Profiling Script                   #
 ####################################################
-
-# Created by `pipx` on 2024-07-26 07:59:55
-# export PATH="$PATH:/Users/jim/.local/bin"

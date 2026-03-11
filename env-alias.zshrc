@@ -2,17 +2,6 @@
 #                   ENV                            #
 ####################################################
 
-# ZSH config
-HISTSIZE=10000000
-SAVEHIST=10000000
-setopt HIST_IGNORE_DUPS          # Don't record an entry that was just recorded again.
-setopt HIST_IGNORE_ALL_DUPS      # Delete old recorded entry if new entry is a duplicate.
-setopt HIST_SAVE_NO_DUPS         # Don't write duplicate entries in the history file.
-setopt HIST_FIND_NO_DUPS
-setopt HIST_EXPIRE_DUPS_FIRST
-setopt EXTENDED_HISTORY
-# # https://stackoverflow.com/questions/11670935/comments-in-command-line-zsh/11873793#11873793
-# setopt interactivecomments
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=3,bold,underline'
 ZSH_AUTOSUGGEST_USE_ASYNC=1
 DISABLE_AUTO_TITLE="true"
@@ -20,10 +9,10 @@ DISABLE_AUTO_TITLE="true"
 export LC_ALL="en_US.UTF-8"
 export LC_CTYPE="en_US.UTF-8"
 export DISABLE_MAGIC_FUNCTIONS=true
-export EDITOR="vim"
+export EDITOR="nvim"
 export AWS_PAGER=""
 # fzf config
-export FZF_BASE=/usr/local/bin/fzf
+export FZF_BASE=/opt/homebrew/bin/fzf
 export FZF_DEFAULT_OPTS='
         --height 90% --multi --layout=reverse
         --bind ctrl-t:toggle-preview
@@ -42,7 +31,7 @@ export PATH="$HOME/.tgenv/bin:/opt/homebrew/bin:$PATH"
 ####################################################
 #                  alias                           #
 ####################################################
-command -v code &> /dev/null && alias vim='code'
+command -v nvim &> /dev/null && alias vim='nvim'
 command -v bat &> /dev/null && alias cat="bat"
 command -v advcp &> /dev/null && alias cp="advcp --progress-bar --preserve=all --no-clobber"
 command -v advmv &> /dev/null && alias mv="advmv --progress-bar -i"
@@ -62,14 +51,7 @@ alias src="zi delete env-alias -y && zi delete code-snippet -y && exec zsh"
 # alias tg-clean-cache='find . -type d \( -name ".terragrunt-cache" -o -name ".terraform" \) -prune -exec rm -rf {} \;'
 alias fzf="fzf-tmux -p 80% --cycle"
 alias tffmt="terraform fmt"
-alias tksv='tmux kill-server'
-alias tl='tmux list-sessions'
 alias tmuxconf='$EDITOR $ZSH_TMUX_CONFIG'
-alias ta='tmux attach -t'
-alias tad='tmux attach -d'
-alias ts='tmux new-session'
-alias tkss='tmux kill-session'
-# alias t=tmux
 # alias vimpluginstall="vim +PlugInstall! +qa!"
 # alias vimplugupdate="vim +PlugUpdate! +qa!"
 # alias vimplugclean="vim +PlugClean! +qa!"
