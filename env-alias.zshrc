@@ -33,22 +33,19 @@ export PATH="$HOME/.tgenv/bin:/opt/homebrew/bin:$PATH"
 ####################################################
 command -v nvim &> /dev/null && alias vim='nvim'
 command -v bat &> /dev/null && alias cat="bat"
-command -v advcp &> /dev/null && alias cp="advcp --progress-bar --preserve=all --no-clobber"
-command -v advmv &> /dev/null && alias mv="advmv --progress-bar -i"
 alias zshconfig="vim ~/.zshrc"
 alias sshconfig="vim ~/.ssh/config"
 alias aliasconfig="vim ~/github/dot.zshrc/env-alias.zshrc"
-alias miscconfig="vim ~/github/macdotfiles/misc.zsh"
 alias envconfig="vim ~/.zshenv"
 alias awsconfig="vim ~/.aws/credentials"
 alias surgeconfig="vim ~/Dropbox/应用/Surge\ Profiles/jim-surge.conf"
 alias his="history -i"
 alias wget="wget -c "
 alias rgf="rg --no-heading --files | rg"
-# alias cp="rsync -aP"
+alias cp="rsync -ahP"
 alias rm="rm -i"
 alias src="zi delete env-alias -y && zi delete code-snippet -y && exec zsh"
-# alias tg-clean-cache='find . -type d \( -name ".terragrunt-cache" -o -name ".terraform" \) -prune -exec rm -rf {} \;'
+alias tg-clean-cache='find . -type d \( -name ".terragrunt-cache" -o -name ".terraform" \) -prune -exec rm -rf {} \;'
 alias fzf="fzf-tmux -p 80% --cycle"
 alias tffmt="terraform fmt"
 alias tmuxconf='$EDITOR $ZSH_TMUX_CONFIG'
@@ -77,3 +74,16 @@ alias tmuxconf='$EDITOR $ZSH_TMUX_CONFIG'
 #         cd $(autojump $@)
 #     fi
 # }
+
+####################################################
+#           Utility functions                      #
+####################################################
+
+timezsh() {
+  shell=${1-$SHELL}
+  for i in $(seq 1 10); do /usr/bin/time $shell -i -c exit; done
+}
+
+function awsp() {
+    export AWS_PROFILE="$(cat ~/.aws/credentials | grep '\[' | grep -v '#' | tr -d '[' | tr -d ']' | fzf)"
+}
