@@ -62,10 +62,6 @@ zi wait"1" as"command" from"gh-r" lucid for \
     atclone'[[ ! -d ~/.config/zoxide ]] && mkdir -p ~/.config/zoxide; ./zoxide init --cmd j zsh > init.zsh' \
         atpull"%atclone" atload"export _ZO_DATA_DIR="$HOME/.config/zoxide"" \
         src"init.zsh" nocompile'!' ajeetdsouza/zoxide
-zi as"program" wait"0" lucid from"gh-r" \
-    atclone"cp advcp /opt/homebrew/bin/advcp && cp advmv /opt/homebrew/bin/advmv" \
-    atpull"%atclone" \
-    for weijing24/advcpmv
 # zi as"program" wait"0" if"[[ $OSTYPE == linux* ]]" lucid from"gh-r" bpick"*linux*" for \
 #     mv"hostctl -> hostctl"    guumaster/hostctl
 # zi as"program" wait"0" if"[[ $OSTYPE == darwin* ]]" lucid from"gh-r" bpick"*macOS*" for \
@@ -173,11 +169,9 @@ zstyle ':fzf-tab:complete:cd:*' fzf-preview 'exa -1 --color=always $realpath'
 # #zstyle ':fzf-tab:*' fzf-command 'fzf-tmux'
 
 if [[ $OSTYPE =~ darwin ]]; then
-    # This script instant load
     alias sed="gsed"
     zi ice id-as'code-snippet' lucid
-    zi snippet $HOME/github/macdotfiles/misc.zsh
-    # source $HOME/github/macdotfiles/mac_config/misc.zsh
+    zi snippet $SNIPPETS_PATH/terraform_functions.zsh
 fi
 
 # This script lazy load
