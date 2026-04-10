@@ -84,6 +84,6 @@ timezsh() {
   for i in $(seq 1 10); do /usr/bin/time $shell -i -c exit; done
 }
 
-function awsp() {
+awsp() {
     export AWS_PROFILE="$(cat ~/.aws/credentials | grep '\[' | grep -v '#' | tr -d '[' | tr -d ']' | fzf)"
 }
