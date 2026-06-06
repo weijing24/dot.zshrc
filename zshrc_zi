@@ -120,7 +120,6 @@ zi wait lucid for \
         zsh-defer -c '[ -s "$NVM_DIR/zsh_completion" ] && . "$NVM_DIR/zsh_completion"'
         zsh-defer -c '[ -s "$HOME/.nvm/nvm.sh" ] && . "$HOME/.nvm/nvm.sh"'
         zsh-defer -c '[ -s "$HOME/.gvm/scripts/gvm" ] && . "$HOME/.gvm/scripts/gvm"'
-        zsh-defer -c '[ -s "$HOME/.openclaw/completions/openclaw.zsh" ] && . "$HOME/.openclaw/completions/openclaw.zsh"'
     " \
         romkatv/zsh-defer
 
