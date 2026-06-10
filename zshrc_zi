@@ -1,9 +1,29 @@
 ####################################################
 #           Profiling Tools                        #
 ####################################################
-export GPG_TTY=$(tty)
-export PATH="/opt/homebrew/opt/grep/libexec/gnubin:$PATH"
+export GPG_TTY=$TTY
 export ULTRA_TF_ALIASES=1
+# PATH: build it from the shared repo (path.zsh) so it works on macOS AND Linux.
+# Runs here after macOS /etc/zprofile path_helper, so our order wins on login
+# shells. On macOS ~/.zshenv also builds it (non-interactive shells); re-running
+# is idempotent (typeset -U). On Ubuntu (no ~/.zshenv) this is the only build.
+[[ -r ~/github/dot.zshrc/path.zsh ]] && source ~/github/dot.zshrc/path.zsh
+(( $+functions[_zsh_build_path] )) && _zsh_build_path
+
+####################################################
+#  History (set HERE, not ~/.zshenv:                #
+#  macOS /etc/zshrc loads after ~/.zshenv and would #
+#  reset HISTSIZE=2000/SAVEHIST=1000 otherwise)     #
+####################################################
+HISTSIZE=10000000
+SAVEHIST=10000000
+setopt HIST_IGNORE_DUPS
+setopt HIST_IGNORE_ALL_DUPS
+setopt HIST_SAVE_NO_DUPS
+setopt HIST_FIND_NO_DUPS
+setopt HIST_EXPIRE_DUPS_FIRST
+setopt EXTENDED_HISTORY
+HISTORY_IGNORE="*export AWS_REGION*|*uicli*"
 
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
@@ -91,7 +111,6 @@ zi wait lucid svn for \
     # atload"unalias grv g" \
 zi wait lucid svn for \
     OMZP::{git,encode64,extract} \
-    OMZP::autojump \
     OMZP::web-search \
     has'fzf' \
         OMZP::fzf \
@@ -111,15 +130,12 @@ zi wait lucid for \
     wfxr/forgit \
     paoloantinori/hhighlighter \
     Tarrasch/zsh-bd \
-    pick"sqlite-history.zsh" atload"autoload -Uz add-zsh-hook" \
-        larkery/zsh-histdb \
     as"program" mv"wd.sh -> wd" pick"wd" atpull'!git reset --hard' \
         mfaerevaag/wd \
     atload" \
         export NVM_SYMLINK_CURRENT="true"
         zsh-defer -c '[ -s "$NVM_DIR/zsh_completion" ] && . "$NVM_DIR/zsh_completion"'
         zsh-defer -c '[ -s "$HOME/.nvm/nvm.sh" ] && . "$HOME/.nvm/nvm.sh"'
-        zsh-defer -c '[ -s "$HOME/.gvm/scripts/gvm" ] && . "$HOME/.gvm/scripts/gvm"'
     " \
         romkatv/zsh-defer
 
@@ -147,7 +163,7 @@ zi light romkatv/powerlevel10k
 ####################################################
 #fzf-tab
 zstyle ':fzf-tab:*' fzf-flags --color=bg+:bright-red
-zstyle ':fzf-tab:complete:cd:*' fzf-preview 'exa -1 --color=always $realpath'
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --color=always $realpath'
 # zstyle ':completion:*' completer _expand _complete _ignored _approximate
 # zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 # zstyle ':completion:*' menu select=2

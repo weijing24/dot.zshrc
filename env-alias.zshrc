@@ -25,14 +25,19 @@ export FZF_DEFAULT_OPTS='
 #forgit config
 export FORGIT_LOG_GRAPH_ENABLE=false
 export BAT_CONFIG_PATH="$HOME/.bat.conf"
-export PATH="$HOME/.tgenv/bin:/opt/homebrew/bin:$PATH"
+# PATH is built by ~/github/dot.zshrc/path.zsh (_zsh_build_path) — no PATH lines here.
 # export MANPAGER="sh -c 'col -bx | bat -l man -p'"
 
 ####################################################
 #                  alias                           #
 ####################################################
 command -v nvim &> /dev/null && alias vim='nvim'
-command -v bat &> /dev/null && alias cat="bat"
+if command -v bat &> /dev/null; then
+    alias cat='bat'
+elif command -v batcat &> /dev/null; then    # Debian/Ubuntu ships `bat` as `batcat`
+    alias bat='batcat'
+    alias cat='batcat'
+fi
 alias zshconfig="vim ~/.zshrc"
 alias sshconfig="vim ~/.ssh/config"
 alias aliasconfig="vim ~/github/dot.zshrc/env-alias.zshrc"
