@@ -76,13 +76,22 @@ zi lucid for \
 #     mv"*/fd -> fd"    @sharkdp/fd \
 #     mv"fzf -> fzf"      junegunn/fzf
 
+# atuin bpick: [ax] = arch prefix aarch64/x86_64; matches macOS-arm, linux-arm, linux-amd64
+# while excluding atuin-server-* and atuin-installer.*
 zi wait"1" as"command" from"gh-r" lucid for \
-    bpick"atuin-*.tar.gz" mv"atuin*/atuin -> atuin" \
+    bpick"atuin-[ax]*.tar.gz" mv"atuin*/atuin -> atuin" \
         atclone"export ATUIN_NOBIND="true";./atuin init zsh > init.zsh; ./atuin gen-completions --shell zsh > _atuin" \
         atpull"%atclone" atload"bindkey '^f' _atuin_search_widget" src"init.zsh" atuinsh/atuin \
     atclone'[[ ! -d ~/.config/zoxide ]] && mkdir -p ~/.config/zoxide; ./zoxide init --cmd j zsh > init.zsh' \
         atpull"%atclone" atload"export _ZO_DATA_DIR="$HOME/.config/zoxide"" \
         src"init.zsh" nocompile'!' ajeetdsouza/zoxide
+
+# fzf: Ubuntu/Debian apt ships an ancient 0.29 that breaks forgit's `glo` (needs fzf >= 0.60).
+# Install a pinned current static binary on Linux only; macOS keeps brew's fzf.
+# bpick covers amd64 (x86_64) and arm64 (aarch64); zinit's CPUTYPE filter selects the right one.
+zi as"command" from"gh-r" wait"0" lucid ver"v0.73.1" \
+    if'[[ $OSTYPE == linux* ]]' bpick"fzf-*-linux_(amd64|arm64).tar.gz" mv"fzf -> fzf" for \
+        junegunn/fzf
 # zi as"program" wait"0" if"[[ $OSTYPE == linux* ]]" lucid from"gh-r" bpick"*linux*" for \
 #     mv"hostctl -> hostctl"    guumaster/hostctl
 # zi as"program" wait"0" if"[[ $OSTYPE == darwin* ]]" lucid from"gh-r" bpick"*macOS*" for \
