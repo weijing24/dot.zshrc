@@ -120,7 +120,6 @@ zi wait lucid svn for \
     # atload"unalias grv g" \
 zi wait lucid svn for \
     OMZP::{git,encode64,extract} \
-    OMZP::web-search \
     has'fzf' \
         OMZP::fzf \
     OMZP::colored-man-pages
@@ -142,14 +141,21 @@ zi wait lucid for \
     as"program" mv"wd.sh -> wd" pick"wd" atpull'!git reset --hard' \
         mfaerevaag/wd \
     atload" \
+        export NVM_DIR="$HOME/.nvm"
         export NVM_SYMLINK_CURRENT="true"
+        zsh-defer -c '[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"'
         zsh-defer -c '[ -s "$NVM_DIR/zsh_completion" ] && . "$NVM_DIR/zsh_completion"'
-        zsh-defer -c '[ -s "$HOME/.nvm/nvm.sh" ] && . "$HOME/.nvm/nvm.sh"'
     " \
         romkatv/zsh-defer
 
 zi wait if'[[ $OSTYPE = darwin* ]]' lucid for \
     tru2dagame/literate-zsh-fzf-snippets
+
+# Grok Build zsh completion (on fpath before zicompinit; no second compinit)
+[[ -r $HOME/.grok/completions/zsh/_grok ]] && {
+  zi ice as"completion" id-as"grok-completion" lucid
+  zi snippet $HOME/.grok/completions/zsh/_grok
+}
 
 zi wait lucid for \
   blockf \

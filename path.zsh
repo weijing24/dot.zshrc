@@ -24,6 +24,7 @@ _zsh_build_path() {
     done
     local -a wanted=(
         $HOME/.local/bin
+        $HOME/.grok/bin
         ${brew_prefix:+$brew_prefix/opt/grep/libexec/gnubin}   # GNU grep (macOS only)
         $HOME/.tgenv/bin
         $HOME/.tfenv/bin

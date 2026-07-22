@@ -12,7 +12,7 @@ export DISABLE_MAGIC_FUNCTIONS=true
 export EDITOR="nvim"
 export AWS_PAGER=""
 # fzf config
-export FZF_BASE=/opt/homebrew/bin/fzf
+export FZF_BASE="${FZF_BASE:-$(command -v fzf)}"
 export FZF_DEFAULT_OPTS='
         --height 90% --multi --layout=reverse
         --bind ctrl-t:toggle-preview
@@ -91,36 +91,4 @@ timezsh() {
 
 awsp() {
     export AWS_PROFILE="$(cat ~/.aws/credentials | grep '\[' | grep -v '#' | tr -d '[' | tr -d ']' | fzf)"
-}
-
-# Run codex against an OpenAI-compatible proxy WITHOUT touching ~/.codex.
-# Your company `codex login` (auth.json / config.toml) stays untouched; this
-# wires up a separate `proxy` model_provider purely via -c flags and reads the
-# API key from an env var. Just export the two vars, then use `codexp` like `codex`:
-#
-#   export CODEX_PROXY_BASE_URL="https://host/v1"   # base that serves /models
-#   export CODEX_PROXY_KEY="sk-..."
-#   codexp "hello"
-#   codexp exec "do something"
-#
-# Optional overrides:
-#   CODEX_PROXY_MODEL     (default: gpt-5.5)
-#   CODEX_PROXY_WIRE_API  (default: responses — codex >=0.x dropped "chat";
-#                          your proxy must implement the OpenAI Responses API)
-codexp() {
-  emulate -L zsh
-  if [[ -z "$CODEX_PROXY_BASE_URL" || -z "$CODEX_PROXY_KEY" ]]; then
-    print -u2 "codexp: export CODEX_PROXY_BASE_URL and CODEX_PROXY_KEY first, e.g.
-  export CODEX_PROXY_BASE_URL=\"https://host/v1\"
-  export CODEX_PROXY_KEY=\"sk-...\""
-    return 1
-  fi
-  CODEX_PROXY_KEY="$CODEX_PROXY_KEY" command codex \
-    -c "model_providers.proxy.name=\"proxy\"" \
-    -c "model_providers.proxy.base_url=\"$CODEX_PROXY_BASE_URL\"" \
-    -c "model_providers.proxy.env_key=\"CODEX_PROXY_KEY\"" \
-    -c "model_providers.proxy.wire_api=\"${CODEX_PROXY_WIRE_API:-responses}\"" \
-    -c "model_provider=\"proxy\"" \
-    -c "model=\"${CODEX_PROXY_MODEL:-gpt-5.5}\"" \
-    "$@"
 }
