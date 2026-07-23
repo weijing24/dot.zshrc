@@ -1,0 +1,145 @@
+#!/usr/bin/env bash
+# Pre-commit: scan staged changes for secrets with gitleaks.
+#
+# If gitleaks is not on PATH, download a pinned release into the user cache
+# (see ensure_gitleaks below). Pin: v8.30.1.
+#
+# Bypass (emergency only):
+#   SKIP_SECRET_SCAN=1 git commit ...
+#   git commit --no-verify
+#
+# Ignore a false positive on one line (gitleaks native):
+#   append  # gitleaks:allow  to that line
+#
+set -euo pipefail
+
+GITLEAKS_VERSION="8.30.1"
+GITLEAKS_TAG="v${GITLEAKS_VERSION}"
+GITLEAKS_BASE_URL="https://github.com/gitleaks/gitleaks/releases/download/${GITLEAKS_TAG}"
+
+if [[ "${SKIP_SECRET_SCAN:-}" == "1" ]]; then
+  echo "pre-commit: secret scan skipped (SKIP_SECRET_SCAN=1)"
+  exit 0
+fi
+
+# Resolve OS/arch to a gitleaks release asset stem, e.g. linux_x64, darwin_arm64.
+gitleaks_platform() {
+  local os arch
+  os="$(uname -s | tr '[:upper:]' '[:lower:]')"
+  arch="$(uname -m)"
+
+  case "$os" in
+    linux|darwin) ;;
+    msys*|mingw*|cygwin*)
+      echo "pre-commit: Windows is not supported by this auto-installer; install gitleaks manually." >&2
+      return 1
+      ;;
+    *)
+      echo "pre-commit: unsupported OS: $(uname -s)" >&2
+      return 1
+      ;;
+  esac
+
+  case "$arch" in
+    x86_64|amd64) arch="x64" ;;
+    aarch64|arm64) arch="arm64" ;;
+    i386|i686|x86) arch="x32" ;;
+    armv7l|armv7) arch="armv7" ;;
+    armv6l|armv6) arch="armv6" ;;
+    *)
+      echo "pre-commit: unsupported arch: $(uname -m)" >&2
+      return 1
+      ;;
+  esac
+
+  # linux_x32 / darwin only ships x64+arm64; armv6/7 only on linux.
+  if [[ "$os" == "darwin" && "$arch" != "x64" && "$arch" != "arm64" ]]; then
+    echo "pre-commit: unsupported macOS arch: $(uname -m)" >&2
+    return 1
+  fi
+  if [[ "$os" == "linux" && "$arch" == "x32" ]]; then
+    : # ok
+  fi
+
+  printf '%s_%s' "$os" "$arch"
+}
+
+# Print path to a usable gitleaks binary (PATH or cached download).
+ensure_gitleaks() {
+  local bin cache_dir platform asset url tmpdir archive
+
+  if command -v gitleaks >/dev/null 2>&1; then
+    command -v gitleaks
+    return 0
+  fi
+
+  cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/gitleaks/${GITLEAKS_VERSION}"
+  bin="${cache_dir}/gitleaks"
+  if [[ -x "$bin" ]]; then
+    printf '%s\n' "$bin"
+    return 0
+  fi
+
+  if ! command -v curl >/dev/null 2>&1; then
+    echo "pre-commit: gitleaks not found and curl is missing; cannot auto-download." >&2
+    echo "  Install: brew install gitleaks   # or apt/snap, etc." >&2
+    return 1
+  fi
+  if ! command -v tar >/dev/null 2>&1; then
+    echo "pre-commit: gitleaks not found and tar is missing; cannot auto-download." >&2
+    return 1
+  fi
+
+  platform="$(gitleaks_platform)" || return 1
+  asset="gitleaks_${GITLEAKS_VERSION}_${platform}.tar.gz"
+  url="${GITLEAKS_BASE_URL}/${asset}"
+
+  echo "pre-commit: gitleaks not on PATH; downloading ${GITLEAKS_TAG} (${platform})..." >&2
+  echo "  $url" >&2
+
+  mkdir -p "$cache_dir"
+  tmpdir="$(mktemp -d "${TMPDIR:-/tmp}/gitleaks-install.XXXXXX")"
+  # shellcheck disable=SC2064
+  trap 'rm -rf "$tmpdir"' RETURN
+
+  archive="${tmpdir}/${asset}"
+  if ! curl -fsSL --connect-timeout 15 --retry 2 -o "$archive" "$url"; then
+    echo "pre-commit: download failed: $url" >&2
+    echo "  Install manually: brew install gitleaks" >&2
+    echo "  Or bypass once: SKIP_SECRET_SCAN=1 git commit ..." >&2
+    return 1
+  fi
+
+  if ! tar -xzf "$archive" -C "$tmpdir" gitleaks; then
+    # some archives may nest; extract all then find binary
+    tar -xzf "$archive" -C "$tmpdir" || {
+      echo "pre-commit: failed to extract $asset" >&2
+      return 1
+    }
+  fi
+
+  if [[ ! -f "${tmpdir}/gitleaks" ]]; then
+    # find first executable named gitleaks
+    local found
+    found="$(find "$tmpdir" -type f -name gitleaks 2>/dev/null | head -n 1 || true)"
+    if [[ -z "$found" ]]; then
+      echo "pre-commit: gitleaks binary not found inside $asset" >&2
+      return 1
+    fi
+    mv "$found" "${tmpdir}/gitleaks"
+  fi
+
+  chmod +x "${tmpdir}/gitleaks"
+  # atomic-ish install into cache
+  mv -f "${tmpdir}/gitleaks" "$bin"
+  trap - RETURN
+  rm -rf "$tmpdir"
+
+  echo "pre-commit: installed gitleaks ${GITLEAKS_TAG} -> $bin" >&2
+  printf '%s\n' "$bin"
+}
+
+GITLEAKS_BIN="$(ensure_gitleaks)" || exit 1
+
+# gitleaks v8.19+ prefers `git --staged` over the deprecated `protect --staged`.
+exec "$GITLEAKS_BIN" git --staged --redact -v --no-banner
