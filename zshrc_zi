@@ -7,7 +7,8 @@ export ULTRA_TF_ALIASES=1
 # Runs here after macOS /etc/zprofile path_helper, so our order wins on login
 # shells. On macOS ~/.zshenv also builds it (non-interactive shells); re-running
 # is idempotent (typeset -U). On Ubuntu (no ~/.zshenv) this is the only build.
-[[ -r ~/github/dot.zshrc/path.zsh ]] && source ~/github/dot.zshrc/path.zsh
+DOT_ZSHRC_DIR="${DOT_ZSHRC_DIR:-$HOME/github/dot.zshrc}"
+[[ -r $DOT_ZSHRC_DIR/path.zsh ]] && source $DOT_ZSHRC_DIR/path.zsh
 (( $+functions[_zsh_build_path] )) && _zsh_build_path
 
 ####################################################
@@ -207,7 +208,7 @@ fi
 
 # This script lazy load
 zi ice wait'0' id-as'env-alias' lucid
-zi snippet $HOME/github/dot.zshrc/env-alias.zshrc
+zi snippet $DOT_ZSHRC_DIR/env-alias.zshrc
 
 ####################################################
 #           End Profiling Script                   #
