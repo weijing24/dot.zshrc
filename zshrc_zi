@@ -170,6 +170,8 @@ zi wait lucid for \
 # PS1="READY > "
 # zinit ice wait'!0'
 # zinit light halfo/lambda-mod-zsh-theme  #OMZT::pmcgee
+# Mac: symlink repo p10k.zsh -> ~/.p10k.zsh (see README). Servers get
+# ~/.p10k.zsh from oracle-infra bootstrap/p10k.zsh via install-zshrc.sh.
 zi ice depth'1' lucid atinit'[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh'
 zi light romkatv/powerlevel10k
 ### End of zsh config chunk

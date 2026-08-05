@@ -7,6 +7,18 @@ Active zsh configuration (symlinked as `~/.zshrc`):
 | `zshrc_zi` | Main config (Zi plugin manager + p10k) |
 | `path.zsh` | Cross-platform PATH builder |
 | `env-alias.zshrc` | Env vars, aliases, and small utilities |
+| `p10k.zsh` | Powerlevel10k prompt (MacBook lean theme) |
+
+### Powerlevel10k
+
+- **MacBook:** `p10k.zsh` in this repo (wizard lean theme). Symlink as `~/.p10k.zsh`:
+
+  ```bash
+  ln -sf ~/github/dot.zshrc/p10k.zsh ~/.p10k.zsh
+  ```
+
+- **Servers (jp01/jp02/…):** server prompt lives in [`oracle-infra` `bootstrap/p10k.zsh`](https://gitlab.com/wjwjwj/oracle-infra); `install-zshrc.sh` installs it to `~/.p10k.zsh`. Do **not** put server p10k in this repo.
+- `zshrc_zi` sources `~/.p10k.zsh` when present (same path on Mac and Linux).
 
 ## Historical configs
 
