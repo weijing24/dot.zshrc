@@ -51,7 +51,13 @@ alias cp="rsync -ahP"
 alias rm="rm -i"
 alias src="zi delete env-alias -y && zi delete code-snippet -y && exec zsh"
 alias tg-clean-cache='find . -type d \( -name ".terragrunt-cache" -o -name ".terraform" \) -prune -exec rm -rf {} \;'
-alias fzf="fzf-tmux -p 80% --cycle"
+# fzf-rex: Rex popup, then tmux, then inline fzf. -p/--cycle match the old fzf-tmux alias.
+# https://github.com/tru2dagame/fzf-rex
+if (( $+commands[fzf-rex] )); then
+  alias fzf='fzf-rex -p 80% --cycle'
+else
+  alias fzf="fzf-tmux -p 80% --cycle"
+fi
 alias tffmt="terraform fmt"
 alias tmuxconf='$EDITOR $ZSH_TMUX_CONFIG'
 # alias vimpluginstall="vim +PlugInstall! +qa!"
@@ -92,3 +98,10 @@ timezsh() {
 awsp() {
     export AWS_PROFILE="$(cat ~/.aws/credentials | grep '\[' | grep -v '#' | tr -d '[' | tr -d ']' | fzf)"
 }
+
+# This file is the last zi wait'0' snippet, so OMZP::fzf and fzf-tab are already
+# loaded. Redirect their launchers (__fzfcmd, histdb, fzf-tab) without touching
+# the manual alias above.
+if (( $+commands[fzf-rex] )); then
+  eval "$(fzf-rex --rex-zsh)"
+fi
