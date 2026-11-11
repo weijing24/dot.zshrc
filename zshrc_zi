@@ -85,7 +85,7 @@ zi wait"1" as"command" from"gh-r" lucid for \
         atpull"%atclone" atload"bindkey '^f' _atuin_search_widget" src"init.zsh" atuinsh/atuin \
     atclone'[[ ! -d ~/.config/zoxide ]] && mkdir -p ~/.config/zoxide; ./zoxide init --cmd j zsh > init.zsh' \
         atpull"%atclone" atload"export _ZO_DATA_DIR="$HOME/.config/zoxide"" \
-        src"init.zsh" nocompile'!' ajeetdsouza/zoxide
+        src"init.zsh" nocompile ajeetdsouza/zoxide
 
 # fzf: Ubuntu/Debian apt ships an ancient 0.29 that breaks forgit's `glo` (needs fzf >= 0.60).
 # Install a pinned current static binary on Linux only; macOS keeps brew's fzf.
