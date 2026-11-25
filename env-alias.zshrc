@@ -60,6 +60,15 @@ else
 fi
 alias tffmt="terraform fmt"
 alias tmuxconf='$EDITOR $ZSH_TMUX_CONFIG'
+# Dropbox per-path ignore (com.dropbox.ignored). rules.dropboxignore is separate.
+alias dbx-add='xattr -w -s com.dropbox.ignored 1'
+alias dbx-delete='xattr -d -s com.dropbox.ignored'
+alias dbx-list='xattr -r -s -p com.dropbox.ignored ~/Dropbox 2>/dev/null'
+# Gemini / Antigravity multi-Mac sync via Dropbox
+alias gemini-status='python3 ~/Dropbox/Apps/ai-agent-config/gemini/gemini-sync.py status'
+alias gemini-pull='python3 ~/Dropbox/Apps/ai-agent-config/gemini/gemini-sync.py pull'
+alias gemini-push='python3 ~/Dropbox/Apps/ai-agent-config/gemini/gemini-sync.py push --allow-running'
+alias gemini-sync='python3 ~/Dropbox/Apps/ai-agent-config/gemini/gemini-sync.py sync'
 # alias vimpluginstall="vim +PlugInstall! +qa!"
 # alias vimplugupdate="vim +PlugUpdate! +qa!"
 # alias vimplugclean="vim +PlugClean! +qa!"
